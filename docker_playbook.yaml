@@ -1,0 +1,93 @@
+---
+
+- name: Installing Docker in Remote Server
+  hosts: slaves
+  become: true
+  tasks:
+    - name: Install required system packages
+      apt:
+        pkg:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+          - python3-pip
+          - virtualenv
+          - python3-setuptools
+        state: latest
+        update_cache: true
+
+    - name: Add Docker GPG apt Key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker Repository
+      apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu focal stable
+        state: present
+
+    - name: Update apt and install docker-ce and docker-compose
+      apt:
+        pkg:
+          - docker-ce
+          - docker-compose
+        state: latest
+        update_cache: true
+
+    - name: Install Docker Module for Python
+      pip:
+        name: docker
+
+
+- name: Copying all the contents to remote server
+  gather_facts: false
+  hosts: slaves
+  tasks:
+    - name: Copy to remote server
+      synchronize:
+        src: ~/kubernetes
+        dest: ~/
+
+- name: Creating and Deploying Flask and Nginx Container in a network
+  gather_facts: false
+  hosts: slaves
+  become: true
+  tasks:
+    - name: Creating the Docker network
+      docker_network:
+        name: my_network
+        state: present
+
+    - name: Building flask Docker Image
+      docker_image:
+        name: hello-world-app:latest
+        source: build
+        build:
+          path: /home/ubuntu/kubernetes/flask/
+        state: present
+
+    - name: Creating the flask Docker container
+      docker_container:
+        name: flask-app
+        image: hello-world-app:latest
+        network_mode: my_network
+        state: started
+
+    - name: Building nginx Docker Image
+      docker_image:
+        name: nginx-img:latest
+        source: build
+        build:
+          path: /home/ubuntu/kubernetes/nginx/
+        state: present
+
+    - name: Creating the nginx Docker container
+      docker_container:
+        name: nginx-cont
+        image: nginx-img:latest
+        ports:
+           - "80:80"
+        network_mode: my_network
+        state: started
+
