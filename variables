@@ -1,0 +1,59 @@
+VARIABLES IN ANSIBLE ACCORDING TO PRIORITY -
+
+1. COMMAND LINE -
+ansible-playbook playbook_name.yaml -e ansible_ssh_user=root  //variable (Highest Priority)
+
+--------------------------------------------------------------------------------------------------------
+
+2. INSIDE HOSTS/INVENTORY FILE -
+   //(Medium Priority)
+EX-
+
+[web]
+172.31.46.23 ansible_ssh_user=root ansible_ssh_pass=redhat ansible_ssh_port=22
+
+[app]
+172.31.25.137
+
+[app:vars]
+ansible_ssh_user=root 
+ansible_ssh_pass=redhat 
+ansible_ssh_port=22
+
+---------------------------------------------------------------------------------------------------------
+
+3. INSIDE PLAYBOOK WRITTEN/IMPORTED -
+   //(Least Priority)
+
+ EX-
+
+--> Written <--
+
+vars:
+  mydir: /tmp/ritesh
+  myfile: /etc/passwd
+  mypkg:
+    - apache2
+    - nginx
+    - tree
+
+tasks:
+ - name: "This task is used to create a directory {{ mydir }}"
+   file:
+     path: "{{ mydir }}"
+     state: directory
+
+--> Imported <--
+
+---
+- name: This is a demo playbook
+  hosts: all
+  become: yes
+  vars_files:
+    - /myfolder/variables.yaml
+
+-----------------------------------------------------------------------------------------------------------
+
+  
+
+
