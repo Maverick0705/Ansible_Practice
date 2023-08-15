@@ -1,7 +1,9 @@
 VARIABLES IN ANSIBLE ACCORDING TO PRIORITY -
 
 1. COMMAND LINE -
-ansible-playbook playbook_name.yaml -e ansible_ssh_user=root  //variable (Highest Priority)
+   //(Highest Priority)
+ansible-playbook playbook_name.yaml -e ansible_ssh_user=root -e ansible_ssh_pass=redhat 
+-e ansible_ssh_port=22 //variable 
 
 --------------------------------------------------------------------------------------------------------
 
