@@ -1,0 +1,36 @@
+---
+- name: Conditional
+  hosts: all
+  become: yes
+  tasks:
+    - apt:
+        name: apache2
+        state: present
+      when: ansible_distribution == "ubuntu"
+      when: ansible_distribution_major_version == 18
+      when: ansible-kernel == "5.4.0-1080-aws"
+
+
+   # you can put any number of conditions
+   #  The last given condition is only consider, if last-condition == true (playbook is executed) else (not-executed)
+ 
+---
+- name: Conditional
+  hosts: all
+  become: yes
+  tasks:
+    - apt:
+        name: apache2
+        state: present
+      when: ansible_distribution == 'ubuntu' and ansible_distribution_major_vesion == '18'
+
+
+---
+- name: Conditional
+  hosts: all
+  become: yes
+  tasks:
+    - apt:
+        name: apache2
+        state: present
+      when: (ansible_distribution == 'ubuntu' or ansible_distribution_major_vesion == '18') and (ansible_distribution == 'CentOS' or ansible_distribution_major_vesion == '17')

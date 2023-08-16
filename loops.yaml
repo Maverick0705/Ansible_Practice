@@ -1,0 +1,36 @@
+---
+- name: "This is to demonstrate loops"
+  hosts: all
+  become: yes
+  vars:
+    mydir:
+      - /tmp/my-cloud-1
+      - /tmp/my-cloud-2
+      - /tmp/my-cloud-3
+    
+    myfile:
+      - /etc/passwd
+      - /etc/shadow
+      - /etc/fstab
+      - /etc/group
+
+  tasks:
+    - copy:
+        src: "{{ item }}"
+        dest: /temp/ritesh
+      with_items:
+        - "{{ myfile }}"
+    
+    - file:
+        path: "{{ item }}"
+        state: directory
+      with_items:
+        - "{{ mydir }}"
+
+    - copy:
+        src: /etc/passwd
+        dest: "{{ item }}"
+      with_items:
+        - "{{ mydir }}"
+
+        

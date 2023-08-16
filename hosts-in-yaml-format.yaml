@@ -1,0 +1,32 @@
+#hosts in INI format
+
+[web-server]
+172.42.53.54
+10.0.0.1
+10.0.0.2
+
+[db-server]
+172.31.2.219
+
+[local]
+localhost
+
+#---------------------------------------------
+
+#hosts in yaml format
+
+all:
+  children:
+    web-server:
+      hosts:
+        172.31.25.75:
+        10.0.0.1:
+    app-server:
+      hosts:
+        172.32.4.23:
+
+#ansible all --list-hosts -i hostsinyaml.yaml
+#ansible web-server -m ping -i hostsinyaml.yaml
+
+
+

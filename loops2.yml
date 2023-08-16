@@ -1,0 +1,26 @@
+#Installing multiple packages 
+---
+- hosts: all
+  become: yes
+  tasks:
+    - apt:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - apache2
+        - wget
+        - tree
+
+
+# apt / yum module supports internal looping, so we use next method
+---
+- hosts: all
+  become: yes
+  tasks:
+    - apt:
+        name: 
+          - apache2
+          - wget
+          - tree
+        state: present
+        

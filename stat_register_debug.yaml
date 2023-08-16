@@ -1,0 +1,36 @@
+---
+- name: Demonstration of stat, register and debug module
+  hosts: all
+  tasks:
+    - stat:   #used to check if a file is present or not
+        path: /tmp/myfile.txt
+      register: isPresent #Output of stat is stored in register module
+    - debug: var=isPresent #To check the output stored in register, we need debug module
+
+    - copy:
+        content: "Hi, how are you?"
+        dest: /tmp/myfile.txt
+      when: isPresent.stat.exists == true
+
+    - file:
+        path: /tmp/myfile.txt
+        state: touch
+      when: isPresent.stat.exists == false
+
+#EX2
+
+---
+- name: To check if apache2 service is up or not
+  hosts: all
+  become: yes
+  tasks:
+    - command: systemctl is-active apache2
+      register: report
+
+    - debug: var=report
+
+    - service:
+        name: apache2
+        state: restarted
+      when: report.rc == 0
+

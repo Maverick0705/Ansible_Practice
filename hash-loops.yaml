@@ -1,0 +1,28 @@
+---
+- name: Hash Loop
+  hosts: all
+  become: yes
+  tasks:
+    - copy:
+        src: "{{ item.a }}"
+        dest: "{{ item.b }}"
+      with_items:
+        - { a: '/etc/passwd', b: '/tmp' }
+        - { a: '/etc/group', b: '/mnt' }
+        - { a: '/etc/fstab', b: '/opt' }
+
+#Example2
+
+---
+- name: Create 3 Users and Assign to 3 different groups
+  hosts: all
+  become: yes
+  tasks:
+    - user:
+        name: "{{ item.username }}"
+        state: present
+        groups: "{{ item.groupname }}"
+      with_items:
+        - { username: 'Ritesh', groupname: 'dev-team' }
+        - { username: 'Mahesh', groupname: 'test-team' }
+        - { username: 'Suresh', groupname: 'prod-team' }

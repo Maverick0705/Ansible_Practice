@@ -1,0 +1,33 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+    - copy:
+        src: "{{ item[0] }}"
+        dest: "{{ item[1] }}"
+      with_nested:
+        - [ '/etc/passwd','/etc/group','/etc/fstab']
+        - [ '/tmp','/mnt','/opt' ]
+
+
+# or
+
+---
+- hosts: all
+  become: yes
+  vars:
+    myfile:
+      - /etc/passwd
+      - /etc/group
+      - /etc/fstab
+    mydir:
+      - /tmp
+      - /mnt
+      - /opt
+  tasks:
+    - copy:
+        src: "{{ item[0] }}"
+        dest: "{{ item[1] }}"
+      with_nested:
+        - "{{ myfile }}"
+        - "{{ mydir }}"
